@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>MULTIUSER CHAT VOICE SYSTEM</title>
+
+{% include "admin/header.html" %}
+
+
+
+  <div id="wrapper">
+{% include "admin/sidebar.html" %}
+
+
+      <div id="content-wrapper">
+
+<div class="container-fluid col-lg-12">
+    <div class="card card-register mx-auto mt-5">
+      <div class="card-header">Chat Area</div>
+      <div class="card-body">
+
+              {% if message %}
+<div class="container p-2">
+<div class="alert alert-info alert-dismissible fade show" role="alert">
+    {{ message }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+</div>
+{% endif %}
+
+ <form action="{{url_for('insertchat2')}}" method="post">
+
+    <label>Send Message</label> <br>
+     <textarea name="chat" required="required" placeholder="Your Message" class="form-control"></textarea>
+        <input type="hidden" name="name" value="Admin">
+     <input type="hidden" name="email" value="{{ session['email'] }}">
+
+        <input type="submit" name="go"  value="Send Message" class="submit">
+ </form>
+          <hr>
+
+<form action="{{ url_for('insertaudio2') }}" method="post">
+      <label>Record Audio Note</label> <br>
+         <input type="hidden" name="name" value="Admin">
+     <input type="hidden" name="email" value="{{ session['email'] }}">
+
+        <input type="number" name="time" required="required" placeholder="Enter record time in seconds">
+
+        <input type="submit" name="record"  value="Start Record" class="submit">
+ </form>
+</div>
+
+        {% block content %}
+   <hr/>
+            {% for u in chat %}
+
+                {% if u[4] == 'audio' %}
+
+                <div class="col-lg-10 offset-lg-1">
+                    <div class="card">
+                        <div style="padding: 2px;">
+
+                      <audio controls><source src='{{ url_for('static', filename='audio/'+u[3])}}'></audio><br/><hr/><div class='offset-lg-6'>{{ u[1] }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ u[5] }} |
+                        <a href="/deletechat/{{u[0]}}" onClick="return confirm('Are you sure you want to delete this record?')">Delete</a></div>
+
+                        </div>
+                    </div><br/><br/>
+                </div>
+                {% endif %}
+
+                 {% if u[4] == 'text' %}
+                    <div class="col-lg-10 offset-lg-1">
+                    <div class="card">
+                        <div style="padding: 2px;">
+
+                        {{ u[3] }}<br/><hr/><div class='offset-lg-6'>{{ u[1] }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ u[5] }} | <a href="/deletechat/{{u[0]}}" onClick="return confirm('Are you sure you want to delete this record?')">Delete</a></div>
+
+                        </div>
+                    </div><br/><br/>
+                </div>
+                    {% endif %}
+
+             {% endfor %}
+        {% endblock %}
+         </div>
+    </div>
+  </div>
+
+
+      <!-- /.container-fluid -->
+<!-- Main close -->
+
+{% include "admin/footer.html" %}
